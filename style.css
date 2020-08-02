@@ -1,3 +1,17 @@
-#terminal {
-    font-family: monospace;
+.terminal {
+    font-family: "Lucida Console", Courier, monospace;
+    font-size: 12px;
+    letter-spacing:0px;
+    line-height: 100%;
+    white-space: pre;
+    background-color: black;
+    color: lime;
+    position: fixed;
+}
+
+.fullscreen {
+    top:0px;
+    left:0px;
+    width:100%;
+    height:100%;
 }
