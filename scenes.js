@@ -21,6 +21,7 @@ class HelloScene extends Scene {
         new Rectangle(3,3,1,getWidth()-6,getHeight()-6);
         new RenderText(5,5,2,"Hello World");
         new RenderText(5,6,2,"This text is very epic");
+        new RenderText(getWidth()-30,5,999,"Version 3");
 
         this.movingLine = new SlantedLine(30,30,0,60,60,10);
         new HLine(4,getWidth()-5,8,2);
