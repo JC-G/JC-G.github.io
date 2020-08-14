@@ -1,5 +1,13 @@
 var WIDTH=0;
 var HEIGHT=0;
+
+function getWidth() {
+    return WIDTH;
+}
+function getHeight() {
+    return HEIGHT;
+}
+
 var SCREEN = null;
 var DEPTH_BUFFER = null;
 var COLOR_BUFFER = null;
@@ -10,73 +18,14 @@ const SHADES = ["&#9617;","&#9618;","&#9619;"]; //░▒▓
 const DEFAULT_COLOR = "0F0";
 var SCREEN_OBJECTS = {};
 
-var c = null;
 var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-class Renderable {
-    static #counter = 0;
-    constructor(x,y,z) {
-        this.render = true;
-        this.x=x;
-        this.y=y;
-        this.z=z;
-        this.UID = Renderable.#counter;
-        Renderable.#counter++;
-        SCREEN_OBJECTS[this.UID] = this;
 
-    }
+var t = 0;
 
-    draw () {
-        console.log("Unimplemented Draw!");
-    }
+function randInt(start,stop) {
+    return Math.floor(start + (stop-start)*Math.random());
 }
 
-class Rectangle extends Renderable {
-    constructor(x,y,z,w,h) {
-        super(x,y,z);
-        this.width = w;
-        this.height = h;
-        this.x=x;
-        this.y=y;
-    }
-    draw() {
-        for (var dx = this.x; dx < this.x+this.width;dx++) {
-            for (var dy = this.y; dy < this.y+this.height;dy++) {
-                setPixel(dx,dy,this.z,SHADES[0]);
-            }
-        }
-    }
-}
-
-class Circle extends Renderable {
-    constructor (x,y,z,r) {
-        super(x,y,z);
-        this.x = x;
-        this.y = y;
-        this.radius = r;
-    }
-    draw () {
-        for (var dx = this.x - this.radius; dx <= this.x + this.radius; dx+=1) {
-            for (var dy = this.y-this.radius; dy <= this.y + this.radius; dy+=1) {
-                var d2 = (dy-this.y)*(dy-this.y) + (dx-this.x)*(dx-this.x);
-                var dist = Math.sqrt(d2) - this.radius
-                if (Math.abs(dist) < 0.5) {
-                    setPixel(dx,dy,this.z,BLOCK,"0F0");
-                } else if (dist < 0) {
-                    setPixel(dx,dy,this.z,BLOCK,"EFA");
-                }
-            }
-        }
-    }
-}
-
-class RandomChar extends Renderable {
-    constructor(x,y,z) {
-        super(x,y,z);
-    }
-    draw () {
-        setPixel(this.x,this.y,this.z,characters.charAt(Math.floor(Math.random() * characters.length)),"F0F");
-    }
-}
 function resetBuffers() {
     
     SCREEN = Array(HEIGHT).fill(0).map(_ => Array(WIDTH).fill(" "));
@@ -85,9 +34,10 @@ function resetBuffers() {
     
 }
 
-function setPixel(x,y,z,ch,col) {
 
-    
+function setPixel(x,y,z,ch,col) {
+    x = Math.floor(x);
+    y = Math.floor(y);
     if (x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT) {
         return;
     }
@@ -137,33 +87,26 @@ function renderScreen() {
     $('#terminal').html(screenText);
 
 }
+
 function renderLoop() {
-    c.x += 0.5;
-    c.y += 1;
+    ACTIVE_SCENE.stepScene(t);
     renderScreen();
+    t++;
 }
 
 $(document).ready( function() {
     resetBuffers();
-    r = new Rectangle(10,3,1,10,3);
-    r.render = false;
-    r.width = 20;
-    new Circle(25,25,1,20);
-    new Circle(35,35,1,15);
-    c = new Circle(20,20,1,5);
-    new Circle(3,3,1,3)
-    new RandomChar(15,15,2);
-    for (var i = 0; i < 60; i++) {
-        new RandomChar(i,i,2);
-    }
+    
 
     $(window).resize( function () {
         setWindowSize();
         renderScreen();
     });
     setWindowSize();
+    ACTIVE_SCENE.setup();
+
     renderScreen();
-    setInterval(renderLoop, 1000);
+    setInterval(renderLoop, 70);
     
 });
 
