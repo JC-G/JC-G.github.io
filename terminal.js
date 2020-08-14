@@ -15,7 +15,7 @@ var COLOR_BUFFER = null;
 const BLOCK = "&#9608;" //█
 const SHADES = ["&#9617;","&#9618;","&#9619;"]; //░▒▓
 
-const DEFAULT_COLOR = "0F0";
+const DEFAULT_COLOR = "000";
 var SCREEN_OBJECTS = {};
 
 var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -28,7 +28,7 @@ function randInt(start,stop) {
 
 function resetBuffers() {
     
-    SCREEN = Array(HEIGHT).fill(0).map(_ => Array(WIDTH).fill(" "));
+    SCREEN = Array(HEIGHT).fill(0).map(_ => Array(WIDTH).fill(BLOCK));
     DEPTH_BUFFER = Array(HEIGHT).fill(0).map(_ => Array(WIDTH).fill(0));
     COLOR_BUFFER = Array(HEIGHT).fill(0).map(_ => Array(WIDTH).fill(DEFAULT_COLOR));
     
