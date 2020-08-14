@@ -1,2 +1,7 @@
+var ACTIVE_SCENE;
 
-var ACTIVE_SCENE = new HelloScene();
+function setScene() {
+    SCREEN_OBJECTS = {};
+    ACTIVE_SCENE = new HelloScene();
+    ACTIVE_SCENE.setup();
+}

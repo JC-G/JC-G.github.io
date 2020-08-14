@@ -100,12 +100,14 @@ $(document).ready( function() {
 
     $(window).resize( function () {
         setWindowSize();
+        setScene();
         renderScreen();
     });
-    setWindowSize();
-    ACTIVE_SCENE.setup();
 
+    setWindowSize();
+    setScene();
     renderScreen();
+
     setInterval(renderLoop, 70);
     
 });
