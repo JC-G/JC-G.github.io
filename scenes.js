@@ -27,7 +27,7 @@ class HelloScene extends Scene {
         link.setColor("FFF");
         link.setLink("page2.html");
 
-        new RenderText(getWidth()-30,5,999,"Version 7");
+        new RenderText(getWidth()-30,5,999,`Version ${VERSION_NUMBER}`);
 
         this.movingLine = new SlantedLine(30,30,0,60,60,10);
         new HLine(4,getWidth()-5,8,2);
@@ -42,7 +42,8 @@ class HelloScene extends Scene {
 
         // (new FilledRectangle(82,10,999,getWidth()-87,getHeight()-15)).setColor("7F7");
 
-        new RenderImage(50,10,100,15,15,"testimg.png");
+        var img = new RenderImage(50,10,100,15,15,"testimg.png");
+        img.setLink("page2.html");
         this.matrixParticles = new ShapeList();
 
         new RandomChar(70,50,1000);

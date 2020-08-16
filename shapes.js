@@ -264,6 +264,8 @@ class RenderImage extends Renderable {
         this.img.crossOrigin = "Anonymous";
         this.img.src = img;
 
+        this.setChar(BLOCK);
+
     }
 
     getPixel(i,j) {
@@ -287,10 +289,13 @@ class RenderImage extends Renderable {
                 var r = px[0];
                 var g = px[1];
                 var b = px[2];
-                setPixel(this.x+i,this.y+j,this.z,BLOCK,rgbToHex(r,g,b));
+                this.drawPixel(this.x+i,this.y+j,this.z,rgbToHex(r,g,b));
             }
         }
     }
 
     // Do not bother overriding drawPixel here for now, the drawing code is too different
+    drawPixel(x,y,z,col) {
+        setPixel(x,y,z,this.char,col,this.link);
+    }
 }
