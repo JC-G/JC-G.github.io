@@ -25,6 +25,38 @@ class Renderable {
     }
 }
 
+class ShapeList {
+    constructor() {
+        this.counter = 0;
+        this._internal = {};
+    }
+
+    add (o) {
+        var id = this.counter++;
+        this._internal[id] = o;
+        return id;
+    }
+
+    get (id) {
+        return this._internal[id];
+    }
+
+    deleteItem (id) {
+        delete this._internal[id];
+    }
+
+    deleteArray(arr) {
+        
+    }
+
+    forAll(f) {
+        for (const [k,v] of Object.entries(this._internal)) {
+            f(k,v);
+        }
+    }
+
+}
+
 class SlantedLine extends Renderable {
     constructor(x1,y1,z1,x2,y2,z2) {
         super(x1,y1,z1);
@@ -185,34 +217,43 @@ class MatrixParticle extends Renderable {
     }
 }
 
-class ShapeList {
-    constructor() {
-        this.counter = 0;
-        this._internal = {};
+
+class RenderImage extends Renderable {
+    constructor(x,y,z,w,h,img) {
+        super(x,y,z);
+        this.w = w;
+        this.h = h;
+        this.drawn = false;
+
+        this.canvas = document.createElement('canvas');
+        this.context = this.canvas.getContext('2d');
+
+        this.img = new Image(w,h);
+        this.img.crossOrigin = "Anonymous";
+        this.img.src = img;
+
     }
 
-    add (o) {
-        var id = this.counter++;
-        this._internal[id] = o;
-        return id;
+    getPixel(i,j) {
+        return this.context.getImageData(i,j, 1, 1).data;
     }
 
-    get (id) {
-        return this._internal[id];
-    }
-
-    deleteItem (id) {
-        delete this._internal[id];
-    }
-
-    deleteArray(arr) {
-        
-    }
-
-    forAll(f) {
-        for (const [k,v] of Object.entries(this._internal)) {
-            f(k,v);
+    draw () {
+        if (this.img.naturalWidth ==0) {
+            return;
+        }
+        if (!this.drawn) {
+            this.context.drawImage(this.img, 0, 0,this.w,this.h);
+            this.drawn = true;
+        }
+        for (var i = 0; i < this.w; i++) {
+            for (var j = 0; j < this.h; j++) {
+                var px = this.getPixel(i,j);
+                var r = px[0];
+                var g = px[1];
+                var b = px[2];
+                setPixel(this.x+i,this.y+j,this.z,BLOCK,rgbToHex(r,g,b));
+            }
         }
     }
-
 }
