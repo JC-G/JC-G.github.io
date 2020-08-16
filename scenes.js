@@ -21,7 +21,13 @@ class HelloScene extends Scene {
         new Rectangle(3,3,1,getWidth()-6,getHeight()-6);
         new RenderText(5,5,2,"Hello World");
         new RenderText(5,6,2,"This text is very epic");
-        new RenderText(getWidth()-30,5,999,"Version 6");
+
+        (new RenderText(30,5,2,"Goodbye World")).setColor("F00");
+        var link = new RenderText(30,6,2,"Click Me!");
+        link.setColor("FFF");
+        link.setLink("page2.html");
+
+        new RenderText(getWidth()-30,5,999,"Version 7");
 
         this.movingLine = new SlantedLine(30,30,0,60,60,10);
         new HLine(4,getWidth()-5,8,2);
@@ -39,6 +45,9 @@ class HelloScene extends Scene {
         new RenderImage(50,10,100,15,15,"testimg.png");
         this.matrixParticles = new ShapeList();
 
+        new RandomChar(70,50,1000);
+        new FilledRectangle(65,65,2,3,3);
+
     }
     
     stepScene(t) {
@@ -46,7 +55,7 @@ class HelloScene extends Scene {
         this.movingLine.x2 = 60-15*(1+Math.sin(t/5));
 
         if (randInt(1,5) > 2) {
-            var p = new MatrixParticle(randInt(82,getWidth()-4),getHeight()-5,1,randInt(5,15));
+            var p = new MatrixParticle(randInt(82,getWidth()-5),getHeight()-5,1,randInt(5,15));
             p.setColor("282");
             this.matrixParticles.add(p);
         }
@@ -65,5 +74,5 @@ class HelloScene extends Scene {
             this.matrixParticles.get(k).delete();
             this.matrixParticles.deleteItem(k);
         },this);
-    } //static scene
+    }
 }

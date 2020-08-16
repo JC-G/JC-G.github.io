@@ -23,6 +23,18 @@ class Renderable {
     setColor(c) {
         this.color = c;
     }
+
+    setChar(c) {
+        this.char = c;
+    }
+
+    setLink(link) {
+        this.link = link;
+    }
+
+    drawPixel(x,y,z) {
+        setPixel(x,y,z,this.char,this.color,this.link);
+    }
 }
 
 class ShapeList {
@@ -45,10 +57,6 @@ class ShapeList {
         delete this._internal[id];
     }
 
-    deleteArray(arr) {
-        
-    }
-
     forAll(f) {
         for (const [k,v] of Object.entries(this._internal)) {
             f(k,v);
@@ -68,15 +76,17 @@ class SlantedLine extends Renderable {
         this.x2 = x2;
         this.y2 = y2;
         this.z2 = z2;
+
+        this.setChar(BLOCK);
     }
 
     draw () {
-        var t = 5000;
+        var t = 200;
         var stepx = (this.x2-this.x1)/t;
         var stepy = (this.y2-this.y1)/t;
         var stepz = (this.z2-this.z1)/t;
         for (var i = 0; i <= t; i++ ) {
-            setPixel(this.x1+stepx*i,this.y1+stepy*i,this.z1+stepz*i,SHADES[0],this.color);
+            this.drawPixel(this.x1+stepx*i,this.y1+stepy*i,this.z1+stepz*i);
         }
 
     }
@@ -88,11 +98,13 @@ class VLine extends Renderable {
         super(x,y1,z);
         this.y1 = y1;
         this.y2 = y2;
+
+        this.setChar("|");
     }
 
     draw () {
         for (var i = this.y1; i <= this.y2; i++) {
-            setPixel(this.x,i,this.z,"|",this.color);
+            this.drawPixel(this.x,i,this.z);
         }
     }
 }
@@ -104,16 +116,18 @@ class Rectangle extends Renderable {
         this.height = h;
         this.x=x;
         this.y=y;
+
+        this.setChar(SHADES[0]);
     }
 
     draw() {
         for (var dx = this.x; dx < this.x+this.width;dx++) {
-            setPixel(dx,this.y,this.z,SHADES[1],this.color);
-            setPixel(dx,this.y+this.height-1,this.z,SHADES[1],this.color);
+            this.drawPixel(dx,this.y,this.z);
+            this.drawPixel(dx,this.y+this.height-1,this.z);
         }
         for (var dy = this.y; dy < this.y+this.height;dy++) {
-            setPixel(this.x,dy,this.z,SHADES[1],this.color);
-            setPixel(this.x+this.width-1,dy,this.z,SHADES[1],this.color);
+            this.drawPixel(this.x,dy,this.z);
+            this.drawPixel(this.x+this.width-1,dy,this.z);
         }
     }
 }
@@ -125,12 +139,14 @@ class FilledRectangle extends Renderable {
         this.height = h;
         this.x=x;
         this.y=y;
+
+        this.setChar(BLOCK);
     }
 
     draw() {
         for (var dx = this.x; dx < this.x+this.width;dx++) {
             for (var dy = this.y; dy < this.y+this.height;dy++) {
-                setPixel(dx,dy,this.z,SHADES[0],this.color);
+                this.drawPixel(dx,dy,this.z);
             }
         }
     }
@@ -142,6 +158,8 @@ class Circle extends Renderable {
         this.x = x;
         this.y = y;
         this.radius = r;
+
+        this.setChar(SHADES[2]);
     }
     draw () {
         for (var dx = this.x - this.radius; dx <= this.x + this.radius; dx+=1) {
@@ -149,9 +167,11 @@ class Circle extends Renderable {
                 var d2 = (dy-this.y)*(dy-this.y) + (dx-this.x)*(dx-this.x);
                 var dist = Math.sqrt(d2) - this.radius
                 if (Math.abs(dist) < 0.5) {
-                    setPixel(dx,dy,this.z,BLOCK,this.color);
+                    // boundary
+                    this.drawPixel(dx,dy,this.z);
                 } else if (dist < 0) {
-                    setPixel(dx,dy,this.z,BLOCK,this.color);
+                    // center
+                    this.drawPixel(dx,dy,this.z);
                 }
             }
         }
@@ -163,11 +183,13 @@ class HLine extends Renderable {
         super(x1,y,z);
         this.x1 = x1;
         this.x2 = x2;
+
+        this.setChar("=");
     }
 
     draw () {
         for (var i = this.x1; i <= this.x2; i++) {
-            setPixel(i,this.y,this.z,"=",this.color);
+            this.drawPixel(i,this.y,this.z);
         }
     }
 }
@@ -177,7 +199,11 @@ class RandomChar extends Renderable {
         super(x,y,z);
     }
     draw () {
-        setPixel(this.x,this.y,this.z,characters.charAt(Math.floor(Math.random() * characters.length)),this.color);
+        this.drawPixel(this.x,this.y,this.z);
+    }
+
+    drawPixel(x,y,z) {
+        setPixel(x,y,z,characters.charAt(Math.floor(Math.random() * characters.length)),this.color);
     }
 }
 
@@ -189,9 +215,12 @@ class RenderText extends Renderable {
 
     draw () {
         for (var i = 0; i < this.text.length; i++) {
-            setPixel(this.x+i,this.y,this.z,this.text.charAt(i),this.color);
+            this.drawPixel(this.x+i,this.y,this.z,this.text.charAt(i));
         }
+    }
 
+    drawPixel(x,y,z,c) {
+        setPixel(x,y,z,c,this.color,this.link);
     }
 }
 
@@ -204,9 +233,13 @@ class MatrixParticle extends Renderable {
 
     draw () {
         for (var i = 0; i < this.length; i++) {
-            setPixel(this.x,this.y-i,this.z,this.str.charAt(i),this.color);
+            this.drawPixel(this.x,this.y-i,this.z,this.str.charAt(i));
 
         }
+    }
+
+    drawPixel(x,y,z,c) {
+        setPixel(x,y,z,c,this.color);
     }
 
     setString() {
@@ -216,7 +249,6 @@ class MatrixParticle extends Renderable {
         }
     }
 }
-
 
 class RenderImage extends Renderable {
     constructor(x,y,z,w,h,img) {
@@ -239,12 +271,15 @@ class RenderImage extends Renderable {
     }
 
     draw () {
-        if (this.img.naturalWidth ==0) {
+        if (this.img.naturalWidth == 0) {
+            console.log("Waiting for the image to load...");
             return;
         }
         if (!this.drawn) {
             this.context.drawImage(this.img, 0, 0,this.w,this.h);
             this.drawn = true;
+            // Force redraw the screen now the image has loaded
+            renderScreen();
         }
         for (var i = 0; i < this.w; i++) {
             for (var j = 0; j < this.h; j++) {
@@ -256,4 +291,6 @@ class RenderImage extends Renderable {
             }
         }
     }
+
+    // Do not bother overriding drawPixel here for now, the drawing code is too different
 }
